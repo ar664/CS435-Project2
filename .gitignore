@@ -1,3 +1,9 @@
+# My ide
+.vscode/
+
+# Program
+main
+
 # Prerequisites
 *.d
 
