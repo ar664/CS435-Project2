@@ -9,6 +9,7 @@ Node* NodeAllocate(char* val)
     node->data = val;
     node->neighbors = NULL;
     node->neighborCount = 0;
+    node->visited = 0;
 
     return node;
 }

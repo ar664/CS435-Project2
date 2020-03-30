@@ -8,6 +8,7 @@ struct _Node
     char*       data;
     Node**      neighbors;
     int         neighborCount;
+    int         visited;
 };
 
 Node* NodeAllocate(char* val);
