@@ -13,6 +13,20 @@ Node* NodeAllocate(char* val)
     return node;
 }
 
+int NodeConnectedUndirected(Node* first, Node* second)
+{
+    int i;
+    for(i = 0; i < first->neighborCount; i++)
+    {
+        if(first->neighbors[i] == second)
+        {
+            return 1;
+        }
+    }
+    
+    return 0;
+}
+
 void NodeAddNeighbor(Node* node, Node* neighbor)
 {
     if(node == NULL || neighbor == NULL)

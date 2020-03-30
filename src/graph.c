@@ -20,7 +20,7 @@ Graph* GraphAllocate()
     graph->nodes = malloc(GRAPH_NODE_ALLOC_INC*sizeof(Node*));
     graph->nodeCount = 0;
 
-    return NULL;
+    return graph;
 }
 
 void AddNode(Graph* graph, char* val)

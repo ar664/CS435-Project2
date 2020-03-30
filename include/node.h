@@ -12,6 +12,8 @@ struct _Node
 
 Node* NodeAllocate(char* val);
 
+int NodeConnectedUndirected(Node* first, Node* second);
+
 void NodeAddNeighbor(Node* node, Node* neighbor);
 
 void NodeRemoveNeighbor(Node* node, Node* neighbor);
