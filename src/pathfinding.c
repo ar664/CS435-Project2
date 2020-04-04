@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <glib.h>
 #include "pathfinding.h"
 
@@ -9,15 +10,22 @@ Node** DFSRec(Node* start, Node* end)
     start = start;
     start->visited = 1;
 
-    for(i = 0; i < start->neighborCount; i++)
+    if(start == NULL || end == NULL)
     {
-        if(start->neighbors[i] == end)
-        {
-            list = calloc(2, sizeof(Node*));
-            list[0] = end;
-            return list;
-        }
-        else if(!start->neighbors[i]->visited)
+        printf("DFSRec: Given start %p and end %p.\n", start, end);
+        return NULL;
+    }
+
+    if(start == end)
+    {
+        list = (Node**) calloc(2, sizeof(Node*));
+        list[0] = end;
+        return list;
+    }
+
+    for(i = 0; i < start->neighborCount; i++)
+    {  
+        if(!start->neighbors[i]->visited)
         {
             list = DFSRec(start->neighbors[i], end);
 
@@ -30,9 +38,9 @@ Node** DFSRec(Node* start, Node* end)
             {
                 if(list[i] == end)
                 {
-                    list = realloc(list, (i+1)*sizeof(Node*));
-                    memmove(list+1, list, (i)*sizeof(Node*));
-                    list[0] = start->neighbors[i];
+                    list = realloc(list, (i+3)*sizeof(Node*));
+                    memmove(list+1, list, (i+2)*sizeof(Node*));
+                    list[0] = start;
                     return list;
                 }
             }
@@ -45,58 +53,125 @@ Node** DFSRec(Node* start, Node* end)
 Node** DFSIter(Node* start, Node* end)
 {
     GQueue *stack;
+    GHashTable *parent;
     Node* current, **list;
-    int i, neighborNum;
+    int i, hasUnvisitedNeighbors, pathSize;
+
+    if(start == NULL || end == NULL)
+    {
+        printf("DFSIter: Given start %p and end %p.\n", start, end);
+        return NULL;
+    } 
+
+    parent = g_hash_table_new(g_direct_hash, g_direct_equal);
+    stack = g_queue_new();
+    g_hash_table_insert(parent, start, NULL);
+    g_queue_push_head(stack, start);
+
+    while(!g_queue_is_empty(stack))
+    {
+        current = g_queue_peek_head(stack);
+        if(current == end)
+        {
+            break;
+        }
+        current->visited = 1;
+        hasUnvisitedNeighbors = 0;
+        for(i = 0; i < current->neighborCount; i++)
+        {
+            if(current->neighbors[i]->visited)
+            {
+                continue;
+            }
+            g_hash_table_insert(parent, current->neighbors[i], current);
+            g_queue_push_head(stack, current->neighbors[i]);
+            hasUnvisitedNeighbors = 1;
+        }
+        if(!hasUnvisitedNeighbors)
+        {
+            g_queue_pop_head(stack);
+        }
+    }
+
+    if(current == end)
+    {
+        //Get size of path to allocate
+        current = g_hash_table_lookup(parent, current);
+        pathSize = 2;
+        while(current != start)
+        {
+            current = g_hash_table_lookup(parent, current);
+            pathSize++;
+        }
+        current = end;
+        list = malloc((pathSize+1)*sizeof(Node*));
+        list[pathSize] = NULL;
+
+        for(i = pathSize-1; i >= 0; i--)
+        {
+            list[i] = current;
+            current = g_hash_table_lookup(parent, current);
+        }
+
+        g_queue_free(stack);
+        g_hash_table_destroy(parent);
+
+        return list;
+    }
+
+    g_queue_free(stack);
+    g_hash_table_destroy(parent);
 
     return NULL;
 }
 
-void BFTRecHelper(Node** list, int* listLength, GQueue* queue)
+void BFTRecHelper(Node** list, int* listLength, Node* node)
 {
-    Node* node;
-    int i;
+    int i, neighborsVisited;
 
-    if(queue->length == 0)
-    {
-        return;
-    }
-
-    
-
-    node = g_queue_pop_head(queue);
-    node->visited = 1;
-    list[*listLength] = node;
-    *listLength++;
+    neighborsVisited = 0;
 
     for(i = 0; i < node->neighborCount; i++)
     {
         if(!node->neighbors[i]->visited)
         {
-            g_queue_push_head(queue, node->neighbors[i]);
+            node->neighbors[i]->visited = 1;
+            list[*listLength] = node->neighbors[i];
+            *listLength = *listLength + 1;
+            neighborsVisited = 1;
         }
     }
 
-    BFTRecHelper(list, listLength, queue);
+    if(neighborsVisited)
+    {
+        for(i = 0; i <  node->neighborCount; i++)
+        {
+            BFTRecHelper(list, listLength, node->neighbors[i]);
+        }
+    }
+    
 }
 
 Node** BFTRec(Graph* graph)
 {
     int i, listLength;
     Node** list;
-    GQueue* queue;
 
-    queue = g_queue_new();
     list = calloc(graph->nodeCount+1, sizeof(Node*));
-    listLength = 1;
+    listLength = 0;
 
     for(i = 0; i < graph->nodeCount; i++)
     {
         if(!graph->nodes[i]->visited)
         {
-            g_queue_push_head(queue, graph->nodes[i]);
-            BFTRecHelper(list, &listLength, queue);
+            graph->nodes[i]->visited = 1;
+            list[listLength] = graph->nodes[i];
+            listLength++;
+            BFTRecHelper(list, &listLength, graph->nodes[i]);
         }
     }
+
+    GraphClearVisits(graph);
 
     return list;
 }
@@ -108,6 +183,7 @@ Node** BFTIter(Graph* graph)
     Node* temp;
     int i, j, listLength;
 
+    queue = g_queue_new();
     list = calloc(graph->nodeCount+1, sizeof(Node*));
     listLength = 0;
 
@@ -115,34 +191,41 @@ Node** BFTIter(Graph* graph)
     {
         while(queue->length != 0)
         {
-            temp = g_queue_pop_head(queue);
-            temp->visited = 1;
-            list[listLength] = temp;
-            listLength++;
+            temp = g_queue_pop_tail(queue);
+            
 
             for(j = 0; j < temp->neighborCount; j++)
             {
                 if(!temp->neighbors[j]->visited)
                 {
                     g_queue_push_head(queue, temp->neighbors[j]);
+                    temp->neighbors[j]->visited = 1;
+                    list[listLength] = temp->neighbors[j];
+                    listLength++;
                 }
             }
         }
         if(!graph->nodes[i]->visited)
         {
             g_queue_push_head(queue, graph->nodes[i]);
+            graph->nodes[i]->visited = 1;
+            list[listLength] = graph->nodes[i];
+            listLength++;
         }
     }
+
+    g_queue_free(queue);
+    GraphClearVisits(graph);
 
     return list;
 }
 
 Node** BFTRecLinkedList(Graph* graph)
 {
-    return NULL;
+    return BFTRec(graph);
 }
 
 Node** BFTIterLinkedList(Graph* graph)
 {
-    return NULL;
+    return BFTIter(graph);
 }

@@ -76,3 +76,12 @@ GHashTable* GetAllNodes(Graph* graph)
     }
     return graph->nodehash;
 }
+
+void GraphClearVisits(Graph* graph)
+{
+    int i;
+    for(i = 0; i < graph->nodeCount; i++)
+    {
+        graph->nodes[i]->visited = 0;
+    }
+}

@@ -22,4 +22,6 @@ struct _Graph
 
 Graph* GraphAllocate();
 
+void GraphClearVisits(Graph* graph);
+
 #endif
