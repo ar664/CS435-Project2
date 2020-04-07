@@ -98,6 +98,7 @@ void AddGridNode(Graph* graph, char* val, Vec2 position)
     node = NodeAllocate(val, position);
     graph->nodes[graph->nodeCount] = node;
 
+    key = GetVec2Key(node->position);
     g_hash_table_insert(graph->nodehash, (gpointer) GetVec2Key(node->position), graph->nodes[graph->nodeCount]);
     graph->nodeCount++;
 }
@@ -367,7 +368,7 @@ Vec2* GetNeighbors(Vec2 currentPosition, int n, int* size)
     {
         x = possibleNeighbors[i].x + currentPosition.x;
         y = possibleNeighbors[i].y + currentPosition.y;
-        if( x < 0 || x > n || y < 0 || y > n)
+        if( x < 0 || x >= n || y < 0 || y >= n)
         {
             continue;
         }

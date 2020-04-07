@@ -24,7 +24,7 @@ int main(int argc, char** argv)
 	int nodeNum, startNode, endNode, noOp, i;
 	char* strList;
 
-	nodeNum = 10;
+	nodeNum = 1000;
 	srand(time(0));
 
 	//Project Part 1-3
@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 	randomDAG = CreateRandomDAGIter(nodeNum);
 	randomCompleteWeightGraph = CreateRandomCompleteWeightedGraph(nodeNum);
 	randomWeightLinkedGraph = CreateWeightedLinkedList(nodeNum);
-	randomGridGraph = CreateRandomGridGraph(nodeNum);
+	randomGridGraph = CreateRandomGridGraph(100);
 
 	return 0;
 }
