@@ -39,7 +39,10 @@ Node** BFTRec(Graph* graph);
 Node** BFTIter(Graph* graph);
 
 Node** BFTRecLinkedList(Graph* graph);
-
 Node** BFTIterLinkedList(Graph* graph);
+
+Node** Kahns(Graph* graph);
+
+Node** mDFS(Graph* graph);
 
 #endif

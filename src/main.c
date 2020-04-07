@@ -7,84 +7,19 @@
 #include "graph.h"
 #include "pathfinding.h"
 
-Graph* CreateRandomUnweightedGraphIter(int n)
+GHashTable* dijkstras(Node* start)
 {
-	Graph* graph = GraphAllocate();
-	Node* nodeA, *nodeB;
-	int i, length, edgeNum, randVal;
-	char *nodeValue;
-	
-	edgeNum = n + rand()%n;
-
-	for(i = 0; i < n; i++)
-	{
-		length = (int) log10(i+1) + 2;
-		nodeValue = malloc(length*(sizeof(char)));
-		sprintf(nodeValue, "%d", i);
-		graph->AddNode(graph, nodeValue);
-	}
-
-	for(i = 0; i < edgeNum; i++)
-	{
-		randVal = rand()%n;
-		nodeA = graph->nodes[randVal];
-		randVal = rand()%n;
-		while(graph->nodes[randVal] != nodeA && NodeConnectedUndirected( nodeA, graph->nodes[randVal]) )
-		{
-			randVal = rand()%n;
-		}
-		nodeB = graph->nodes[randVal];
-		graph->AddUndirectedEdge(graph, nodeA, nodeB);
-	}
-
-	return graph;
+	return NULL;
 }
 
-Graph* CreateLinkedList(int n)
+GHashTable* astart(Node* start)
 {
-	Graph* graph = GraphAllocate();
-	int i, length;
-	char* nodeValue;
-
-	for(i = 0; i < n; i++)
-	{
-		length = (int) log10(i+1) + 2;
-		nodeValue = malloc(length*sizeof(char));
-		sprintf(nodeValue, "%d", i);
-		graph->AddNode(graph, nodeValue);
-	}
-
-	for(i = 0; i < n-1; i++)
-	{
-		graph->AddUndirectedEdge(graph, graph->nodes[i], graph->nodes[i+1]);
-	}
-
-	return graph;
-}
-
-char* NodeListToStr(Node** list, int maxNodes)
-{
-	int base10, i, curLen;
-	char* listStr;
-
-	base10 = (int) log10(maxNodes) + 2;
-	listStr = malloc((maxNodes*base10+1)+sizeof(char));
-	curLen = 0;
-
-	for(i = 0; list[i]; i++)
-	{
-		sprintf(listStr+(curLen), " %s", list[i]->data);
-		curLen += strlen(list[i]->data)+1;
-	}
-
-	listStr[curLen+1] = '\0';
-
-	return listStr;
+	return NULL;
 }
 
 int main(int argc, char** argv)
 {
-	Graph* randomGraph, *linkedGraph;
+	Graph* randomGraph, *linkedGraph, *randomDAG, *randomCompleteWeightGraph, *randomWeightLinkedGraph, *randomGridGraph;
 	Node** bfsRecList, **bfsIterList, **dfsRecList, **dfsIterList;
 	int nodeNum, startNode, endNode, noOp, i;
 	char* strList;
@@ -92,6 +27,7 @@ int main(int argc, char** argv)
 	nodeNum = 10;
 	srand(time(0));
 
+	//Project Part 1-3
 	randomGraph = CreateRandomUnweightedGraphIter(nodeNum);
 	linkedGraph = CreateLinkedList(nodeNum);
 
@@ -108,10 +44,8 @@ int main(int argc, char** argv)
 
 	dfsRecList = NULL;
 	dfsIterList = NULL;
-	//Malloc check
-	dfsIterList = malloc(sizeof(Node*));
-	free(dfsIterList);
 	
+	//Randomly pick a start and end until a path is found.
 	while(!dfsRecList)
 	{
 		startNode = rand()%nodeNum;
@@ -138,6 +72,13 @@ int main(int argc, char** argv)
 	strList = NodeListToStr(dfsIterList, nodeNum);
 	printf("dfsIterList:%s\n", strList);
 	free(strList);
+
+	//Project Part 4-7
+
+	randomDAG = CreateRandomDAGIter(nodeNum);
+	randomCompleteWeightGraph = CreateRandomCompleteWeightedGraph(nodeNum);
+	randomWeightLinkedGraph = CreateWeightedLinkedList(nodeNum);
+	randomGridGraph = CreateRandomGridGraph(nodeNum);
 
 	return 0;
 }
