@@ -150,3 +150,13 @@ char* NodeListToStr(Node** list, int maxNodes)
 
 	return listStr;
 }
+
+u_int64_t GetVec2Key(Vec2 v)
+{
+    u_int64_t key;
+
+    key = (u_int64_t) v.x<<32;
+    key += v.y;
+
+    return key;
+}

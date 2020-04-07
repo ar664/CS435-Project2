@@ -43,7 +43,7 @@ Graph* GraphAllocate(int type)
     {
         graph->AddGridNode = AddGridNode;
         //Get hash via Vec2
-        graph->nodehash = g_hash_table_new(g_int64_hash, g_int64_equal);
+        graph->nodehash = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, NULL);
     }
     else
     {
@@ -83,6 +83,7 @@ void AddNode(Graph* graph, char* val)
 void AddGridNode(Graph* graph, char* val, Vec2 position)
 {
     Node* node;
+    u_int64_t key;
     if(graph == NULL || val == NULL)
     {
         printf("AddNode: Attempted to add node with value %p to graph %p.\n", val, graph);
@@ -96,7 +97,8 @@ void AddGridNode(Graph* graph, char* val, Vec2 position)
 
     node = NodeAllocate(val, position);
     graph->nodes[graph->nodeCount] = node;
-    g_hash_table_insert(graph->nodehash, &node->position, graph->nodes[graph->nodeCount]);
+
+    g_hash_table_insert(graph->nodehash, (gpointer) GetVec2Key(node->position), graph->nodes[graph->nodeCount]);
     graph->nodeCount++;
 }
 
@@ -417,7 +419,7 @@ Graph* CreateRandomGridGraph(int n)
             
             position.x = i;
             position.y = j;
-            nodeA = g_hash_table_lookup(nodesHash, &position);
+            nodeA = g_hash_table_lookup(nodesHash, (gpointer) GetVec2Key(position));
             neighbors = GetNeighbors(position, n, &length);
             for(k = 0; k < length; k++)
             {
@@ -425,7 +427,7 @@ Graph* CreateRandomGridGraph(int n)
                 if(chance)
                 {
                     neighborPos = neighbors[k];
-                    nodeB = g_hash_table_lookup(nodesHash, &neighborPos);
+                    nodeB = g_hash_table_lookup(nodesHash, (gpointer) GetVec2Key(neighborPos));
                     graph->AddUndirectedEdge(graph, nodeA, nodeB);
                 }
             }

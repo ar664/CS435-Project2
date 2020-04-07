@@ -1,13 +1,17 @@
 #ifndef __NODE_H
 #define __NODE_H
 
+#include <glib.h>
+
 typedef struct _Vec2 Vec2;
 
 struct _Vec2
 {
-    int         x:4;
-    int         y:4;
+    int         x:32;
+    int         y:32;
 };
+
+u_int64_t GetVec2Key(Vec2 v);
 
 typedef struct _Node Node;
 
