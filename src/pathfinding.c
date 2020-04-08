@@ -298,9 +298,103 @@ GHashTable* djikstras(Node* start)
 
 }
 
-GHashTable* astar(Node* start)
+Node** astar(Node* start, Node* end, int* size)
 {
+    GHashTable *availableNeighbors, *parents, *fCostTable, *gCostTable;
+    GHashTableIter iter;
+    Node** path, *minNeighbor, *currentNeighbor;
+    int i;
+    u_int64_t minFCost, currentFCost, currentNeighborFCost, currentGCost;
 
+    if(start == NULL || end == NULL || size == NULL)
+    {
+        printf("astar: Attempted to find path of %p Node to %p Node with %p size.\n", start, end, size);
+        return NULL;
+    }
+
+    path = NULL;
+
+    availableNeighbors = g_hash_table_new(g_direct_hash, g_direct_equal);
+    parents = g_hash_table_new(g_direct_hash, g_direct_equal);
+    fCostTable = g_hash_table_new(g_direct_hash, g_direct_equal);
+    gCostTable = g_hash_table_new(g_direct_hash, g_direct_equal);
+
+    g_hash_table_insert(fCostTable, start, 0);
+    for(i = 0; i < start->neighborCount; i++)
+    {
+        g_hash_table_insert(availableNeighbors, start->neighbors[i], (gpointer) (u_int64_t) 1 + NodeGetDistanceFromTo(start->neighbors[i], end));
+        g_hash_table_insert(gCostTable, start->neighbors[i], (gpointer) 1);
+        g_hash_table_insert(parents, start->neighbors[i], start);
+    }
+
+    while(g_hash_table_size(availableNeighbors) != 0)
+    {
+        minFCost = INFINITE_INT;
+        g_hash_table_iter_init(&iter, availableNeighbors);
+        
+        for(i = 0; i < g_hash_table_size(availableNeighbors); i++)
+        {
+            g_hash_table_iter_next(&iter, (gpointer) &currentNeighbor, (gpointer) &currentFCost);
+
+            if(currentFCost < minFCost)
+            {
+                minFCost = currentFCost;
+                minNeighbor = currentNeighbor;
+            }
+        }
+
+        g_hash_table_insert(fCostTable, minNeighbor, (gpointer) minFCost);
+        g_hash_table_remove(availableNeighbors, minNeighbor);
+
+        if(minNeighbor == end)
+        {
+            break;
+        }
+
+        currentGCost = (u_int64_t) g_hash_table_lookup(gCostTable, minNeighbor);
+
+        for(i = 0; i < minNeighbor->neighborCount; i++)
+        {
+            if(minNeighbor->neighbors[i] == g_hash_table_lookup(parents, minNeighbor))
+            {
+                continue;
+            }
+
+            currentFCost = (u_int64_t) g_hash_table_lookup(fCostTable, minNeighbor->neighbors[i]);
+            currentNeighborFCost = currentGCost + 1 + NodeGetDistanceFromTo(minNeighbor->neighbors[i], end);
+
+            if(currentFCost == 0 || currentNeighborFCost  < currentFCost)
+            {
+                g_hash_table_insert(availableNeighbors, minNeighbor->neighbors[i], (gpointer) currentNeighborFCost);
+                g_hash_table_insert(parents, minNeighbor->neighbors[i], minNeighbor);
+                g_hash_table_insert(gCostTable, minNeighbor->neighbors[i], (gpointer) currentGCost + 1);
+            }
+        }
+    }
+
+    if(minNeighbor == end)
+    {
+        currentNeighbor = minNeighbor;
+
+        while(currentNeighbor != start)
+        {
+            currentNeighbor = g_hash_table_lookup(parents, currentNeighbor);
+            *size = *size + 1;
+        }
+
+        path = malloc( (*size + 1)*sizeof(Node*));
+        currentNeighbor = minNeighbor;
+
+        for(i = *size; i >= 0; i--)
+        {
+            path[i] = currentNeighbor;
+            currentNeighbor = g_hash_table_lookup(parents, currentNeighbor);
+        }
+        *size = *size + 1;
+    }
+    
+    return path;
+    
 }
 
 void PrintHashTableKVPairs(char* name, GHashTable* hashtable)

@@ -41,6 +41,10 @@ void NodeRemoveWeightedNeighbor(Node* node, Node* neighbor);
 
 void PrintNodeList(char* name, Node** list, int maxNodes);
 
+void PrintGridNodeList(char* name, Node** list, int numNodes);
+
 char* NodeListToStr(Node** list, int maxNodes);
+
+int NodeGetDistanceFromTo(Node* start, Node* end);
 
 #endif

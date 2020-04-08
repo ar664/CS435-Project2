@@ -11,9 +11,10 @@
 int main(int argc, char** argv)
 {
 	Graph* randomGraph, *linkedGraph, *randomDAG, *randomCompleteWeightGraph, *randomWeightLinkedGraph, *randomGridGraph;
-	Node** bfsRecList, **bfsIterList, **dfsRecList, **dfsIterList, **kahnsList, **mDFSList;
-	GHashTable* djikstrasCompleteSet, *djikstrasLinkedSet, *astartSet;
-	int nodeNum, startNode, endNode, noOp, i;
+	Node** bfsRecList, **bfsIterList, **dfsRecList, **dfsIterList, **kahnsList, **mDFSList, **astarList;
+	GHashTable* djikstrasCompleteSet, *djikstrasLinkedSet, *gridHash;
+	Vec2 startPosition, endPosition;
+	int nodeNum, startNode, endNode, i, listSize;
 	char* strList;
 
 	nodeNum = 1000;
@@ -74,6 +75,21 @@ int main(int argc, char** argv)
 	PrintHashTableKVPairs("djistrasCompleteSet", djikstrasCompleteSet);
 	PrintHashTableKVPairs("djikstrasLinkedSet", djikstrasLinkedSet);
 
+	listSize = 0;
+	gridHash = randomGridGraph->GetAllNodes(randomGridGraph);
+	startPosition.x = 0; startPosition.y = 0;
+	endPosition.x = 99; endPosition.y = 99;
 
+	astarList = astar( g_hash_table_lookup(gridHash, GetVec2Key(startPosition)) , g_hash_table_lookup(gridHash, GetVec2Key(endPosition)), &listSize);
+
+	if(astarList == NULL)
+	{
+		printf("astar could not find path from (0,0) to (99,99).\n");
+	}
+	else
+	{
+		PrintGridNodeList("astarList", astarList, listSize);
+	}
+	
 	return 0;
 }

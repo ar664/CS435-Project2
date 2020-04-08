@@ -44,7 +44,7 @@ Node** BFTIterLinkedList(Graph* graph);
 
 GHashTable* djikstras(Node* start);
 
-GHashTable* astar(Node* start);
+Node** astar(Node* start, Node* end, int* size);
 
 void PrintHashTableKVPairs(char* name, GHashTable* hashtable);
 

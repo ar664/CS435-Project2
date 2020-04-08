@@ -131,16 +131,25 @@ int NodeIsGridNeighbor(Vec2 first, Vec2 second)
     return 0;
 }
 
-char* NodeListToStr(Node** list, int maxNodes)
+int NodeGetDistanceFromTo(Node* start, Node* end)
+{
+    int dist;
+
+    dist = sqrt( pow(start->position.x - end->position.x, 2) + pow(start->position.y - end->position.y, 2));
+
+    return dist;
+}
+
+char* NodeListToStr(Node** list, int numNodes)
 {
 	int base10, i, curLen;
 	char* listStr;
 
-	base10 = (int) log10(maxNodes) + 2;
-	listStr = malloc((maxNodes*base10+1)+sizeof(char));
+	base10 = (int) log10(numNodes) + 2;
+	listStr = malloc((numNodes*base10+1)+sizeof(char));
 	curLen = 0;
 
-	for(i = 0; i < maxNodes && list[i]; i++)
+	for(i = 0; i < numNodes && list[i]; i++)
 	{
 		sprintf(listStr+(curLen), " %s", list[i]->data);
 		curLen += strlen(list[i]->data)+1;
@@ -151,13 +160,25 @@ char* NodeListToStr(Node** list, int maxNodes)
 	return listStr;
 }
 
-void PrintNodeList(char* name, Node** list, int maxNodes)
+void PrintNodeList(char* name, Node** list, int numNodes)
 {
     char* nodeStr;
 
-    nodeStr = NodeListToStr(list, maxNodes);
+    nodeStr = NodeListToStr(list, numNodes);
     printf("%s:%s\n", name, nodeStr);
     free(nodeStr);
+}
+
+void PrintGridNodeList(char* name, Node** list, int numNodes)
+{
+    int i;
+
+    printf("%s: \n", name);
+    for(i = 0; i < numNodes-1; i++)
+    {
+        printf("(%d, %d)->", list[i]->position.x, list[i]->position.y);
+    }
+    printf("(%d, %d)\n", list[i]->position.x, list[i]->position.y);
 }
 
 u_int64_t GetVec2Key(Vec2 v)

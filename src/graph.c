@@ -434,4 +434,6 @@ Graph* CreateRandomGridGraph(int n)
             }
         }
     }
+
+    return graph;
 }
