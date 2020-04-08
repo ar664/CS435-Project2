@@ -75,7 +75,11 @@ Node** mDFS(Graph* graph)
 
             for(j = 0; j < currentNode->neighborCount; j++)
             {
-                g_queue_push_head(queue, currentNode->neighbors);
+                if(!currentNode->neighbors[j]->visited)
+                {
+                    g_queue_push_head(queue, currentNode->neighbors[j]);
+                }
+                
             }
         }
     }

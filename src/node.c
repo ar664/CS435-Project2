@@ -140,7 +140,7 @@ char* NodeListToStr(Node** list, int maxNodes)
 	listStr = malloc((maxNodes*base10+1)+sizeof(char));
 	curLen = 0;
 
-	for(i = 0; list[i]; i++)
+	for(i = 0; i < maxNodes && list[i]; i++)
 	{
 		sprintf(listStr+(curLen), " %s", list[i]->data);
 		curLen += strlen(list[i]->data)+1;

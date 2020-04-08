@@ -2,6 +2,7 @@
 #define __PATHFINDING_H
 
 #include "graph.h"
+#define INFINITE_INT 2147483647
 
 /**
  * @brief Recursively searches for end node from start node via DFS Algorithm
@@ -43,6 +44,8 @@ Node** BFTIterLinkedList(Graph* graph);
 
 GHashTable* djikstras(Node* start);
 
-GHashTable* astart(Node* start);
+GHashTable* astar(Node* start);
+
+void PrintHashTableKVPairs(char* name, GHashTable* hashtable);
 
 #endif

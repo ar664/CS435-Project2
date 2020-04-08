@@ -230,3 +230,102 @@ Node** BFTIterLinkedList(Graph* graph)
     return BFTIter(graph);
 }
 
+GHashTable* djikstras(Node* start)
+{
+    GHashTable* shortestDistance, *parents, *availableNeighbors;
+    GHashTableIter iter;
+    Node* minNeighbor, *currentNeighbor;
+    int i;
+    u_int64_t minNeighborDistance, neighborValue, currentDistance, currentNeighborDistance;
+
+    if(start == NULL)
+    {
+        printf("djikstras: Attempted to start on NULL node.\n");
+        return NULL;
+    }
+
+    shortestDistance = g_hash_table_new(g_direct_hash, g_direct_equal);
+    parents = g_hash_table_new(g_direct_hash, g_direct_equal);
+    availableNeighbors = g_hash_table_new(g_direct_hash, g_direct_equal);
+
+    g_hash_table_insert(shortestDistance, start, 0);
+    for(i = 0; i < start->neighborCount; i++)
+    {
+        g_hash_table_insert(availableNeighbors, start->neighbors[i], (gpointer) (u_int64_t) start->weights[i]);
+        g_hash_table_insert(parents, start->neighbors[i], start);
+    }
+
+    while(g_hash_table_size(availableNeighbors) != 0)
+    {
+        minNeighborDistance = INFINITE_INT;
+        g_hash_table_iter_init(&iter, availableNeighbors);
+        for(i = 0; i < g_hash_table_size(availableNeighbors); i++)
+        {
+            g_hash_table_iter_next(&iter, (gpointer) &currentNeighbor, (gpointer) &neighborValue);
+
+            if(neighborValue < minNeighborDistance)
+            {
+                minNeighbor = currentNeighbor;
+                minNeighborDistance = neighborValue;
+            }
+        }
+
+        g_hash_table_insert(shortestDistance, minNeighbor, (gpointer) minNeighborDistance);
+        g_hash_table_remove(availableNeighbors, minNeighbor);
+
+        for(i = 0; i < minNeighbor->neighborCount; i++)
+        {
+            if(minNeighbor->neighbors[i] == g_hash_table_lookup(parents, minNeighbor))
+            {
+                continue;
+            }
+
+            currentDistance = (u_int64_t) g_hash_table_lookup(shortestDistance, minNeighbor->neighbors[i]);
+            currentNeighborDistance = minNeighbor->weights[i] + minNeighborDistance;
+
+            if(currentDistance == 0 || currentNeighborDistance  < currentDistance)
+            {
+                g_hash_table_insert(availableNeighbors, minNeighbor->neighbors[i], (gpointer) currentNeighborDistance);
+                g_hash_table_insert(parents, minNeighbor->neighbors[i], minNeighbor);
+            }
+        }
+    }
+
+    g_hash_table_destroy(availableNeighbors);
+    g_hash_table_destroy(parents);
+
+    return shortestDistance;
+
+}
+
+GHashTable* astar(Node* start)
+{
+
+}
+
+void PrintHashTableKVPairs(char* name, GHashTable* hashtable)
+{
+    int i;
+    Node* key;
+    u_int64_t value;
+    GHashTableIter iter;
+
+    if(hashtable == NULL)
+    {
+        printf("PrintHashTableKVPairs: Attempted to print NULL hashtable.\n");
+        return;
+    }
+
+    printf("%s (UnOrdered)\n", name);
+
+    g_hash_table_iter_init(&iter, hashtable);
+
+    for(i = 0; i < g_hash_table_size(hashtable)-1; i++)
+    {
+        g_hash_table_iter_next(&iter, (gpointer) &key, (gpointer) &value);
+        printf("%s: %ld, ", key->data, value);
+    }
+    
+    g_hash_table_iter_next(&iter, (gpointer) &key, (gpointer) &value);
+    printf("%s: %ld\n", key->data, value);
+}

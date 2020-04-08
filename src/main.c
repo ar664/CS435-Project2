@@ -12,6 +12,7 @@ int main(int argc, char** argv)
 {
 	Graph* randomGraph, *linkedGraph, *randomDAG, *randomCompleteWeightGraph, *randomWeightLinkedGraph, *randomGridGraph;
 	Node** bfsRecList, **bfsIterList, **dfsRecList, **dfsIterList, **kahnsList, **mDFSList;
+	GHashTable* djikstrasCompleteSet, *djikstrasLinkedSet, *astartSet;
 	int nodeNum, startNode, endNode, noOp, i;
 	char* strList;
 
@@ -62,9 +63,17 @@ int main(int argc, char** argv)
 	randomGridGraph = CreateRandomGridGraph(100);
 
 	kahnsList = Kahns(randomDAG);
-	// mDFSList = mDFS(randomDAG);
+	mDFSList = mDFS(randomDAG);
 
 	PrintNodeList("kahnsList", kahnsList, nodeNum);
+	PrintNodeList("mDFSList", mDFSList, nodeNum);
+
+	djikstrasCompleteSet = djikstras(randomCompleteWeightGraph->nodes[0]);
+	djikstrasLinkedSet = djikstras(randomWeightLinkedGraph->nodes[0]);
+
+	PrintHashTableKVPairs("djistrasCompleteSet", djikstrasCompleteSet);
+	PrintHashTableKVPairs("djikstrasLinkedSet", djikstrasLinkedSet);
+
 
 	return 0;
 }
