@@ -41,8 +41,8 @@ Node** BFTIter(Graph* graph);
 Node** BFTRecLinkedList(Graph* graph);
 Node** BFTIterLinkedList(Graph* graph);
 
-Node** Kahns(Graph* graph);
+GHashTable* djikstras(Node* start);
 
-Node** mDFS(Graph* graph);
+GHashTable* astart(Node* start);
 
 #endif

@@ -6,21 +6,12 @@
 #include <glib.h>
 #include "graph.h"
 #include "pathfinding.h"
-
-GHashTable* dijkstras(Node* start)
-{
-	return NULL;
-}
-
-GHashTable* astart(Node* start)
-{
-	return NULL;
-}
+#include "topsort.h"
 
 int main(int argc, char** argv)
 {
 	Graph* randomGraph, *linkedGraph, *randomDAG, *randomCompleteWeightGraph, *randomWeightLinkedGraph, *randomGridGraph;
-	Node** bfsRecList, **bfsIterList, **dfsRecList, **dfsIterList;
+	Node** bfsRecList, **bfsIterList, **dfsRecList, **dfsIterList, **kahnsList, **mDFSList;
 	int nodeNum, startNode, endNode, noOp, i;
 	char* strList;
 
@@ -79,6 +70,9 @@ int main(int argc, char** argv)
 	randomCompleteWeightGraph = CreateRandomCompleteWeightedGraph(nodeNum);
 	randomWeightLinkedGraph = CreateWeightedLinkedList(nodeNum);
 	randomGridGraph = CreateRandomGridGraph(100);
+
+	kahnsList = Kahns(randomDAG);
+	// mDFSList = mDFS(randomDAG);
 
 	return 0;
 }

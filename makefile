@@ -10,11 +10,11 @@ LDIR=lib
 LIBS=-lm `pkg-config --libs glib-2.0`
 
 #H files go here
-_DEPS = node.h graph.h pathfinding.h
+_DEPS = node.h graph.h pathfinding.h topsort.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 #Target object files go here (There basically the c files)
-_OBJ = main.o node.o graph.o pathfinding.o
+_OBJ = main.o node.o graph.o pathfinding.o topsort.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
