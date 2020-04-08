@@ -39,6 +39,8 @@ void NodeAddWeightedNeighbor(Node* node, Node* neighbor, int weight);
 
 void NodeRemoveWeightedNeighbor(Node* node, Node* neighbor);
 
+void PrintNodeList(char* name, Node** list, int maxNodes);
+
 char* NodeListToStr(Node** list, int maxNodes);
 
 #endif

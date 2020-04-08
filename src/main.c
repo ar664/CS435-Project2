@@ -25,13 +25,8 @@ int main(int argc, char** argv)
 	bfsRecList = BFTRec(randomGraph);
 	bfsIterList = BFTIter(randomGraph);
 
-	strList = NodeListToStr(bfsRecList, nodeNum);
-	printf("bfsRecList:%s\n", strList);
-	free(strList);
-
-	strList = NodeListToStr(bfsIterList, nodeNum);
-	printf("bfsIterList:%s\n", strList);
-	free(strList);
+	PrintNodeList("bfsRecList", bfsRecList, nodeNum);
+	PrintNodeList("bfsIterList", bfsIterList, nodeNum);
 
 	dfsRecList = NULL;
 	dfsIterList = NULL;
@@ -56,13 +51,8 @@ int main(int argc, char** argv)
 		GraphClearVisits(randomGraph);
 	}
 	
-	strList = NodeListToStr(dfsRecList, nodeNum);
-	printf("dfsRecList:%s\n", strList);
-	free(strList);
-
-	strList = NodeListToStr(dfsIterList, nodeNum);
-	printf("dfsIterList:%s\n", strList);
-	free(strList);
+	PrintNodeList("dfsRecList", dfsRecList, nodeNum);
+	PrintNodeList("dfsIterList", dfsIterList, nodeNum);
 
 	//Project Part 4-7
 
@@ -73,6 +63,8 @@ int main(int argc, char** argv)
 
 	kahnsList = Kahns(randomDAG);
 	// mDFSList = mDFS(randomDAG);
+
+	PrintNodeList("kahnsList", kahnsList, nodeNum);
 
 	return 0;
 }

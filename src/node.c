@@ -151,6 +151,15 @@ char* NodeListToStr(Node** list, int maxNodes)
 	return listStr;
 }
 
+void PrintNodeList(char* name, Node** list, int maxNodes)
+{
+    char* nodeStr;
+
+    nodeStr = NodeListToStr(list, maxNodes);
+    printf("%s:%s\n", name, nodeStr);
+    free(nodeStr);
+}
+
 u_int64_t GetVec2Key(Vec2 v)
 {
     u_int64_t key;
